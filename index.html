@@ -52,7 +52,17 @@
 
 <script>
 
-let dataKeuangan = JSON.parse(localStorage.getItem("keuangan")) || [];
+// ================= LOAD DATA =================
+let dataKeuangan = [];
+
+try {
+    const dataSimpan = localStorage.getItem("keuangan");
+    if (dataSimpan) {
+        dataKeuangan = JSON.parse(dataSimpan);
+    }
+} catch (error) {
+    dataKeuangan = [];
+}
 
 // ================= FORMAT RUPIAH =================
 document.getElementById("jumlah").addEventListener("keyup", function() {
@@ -72,7 +82,7 @@ function formatRupiah(angka, prefix) {
     }
 
     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-    return prefix == undefined ? rupiah : (rupiah ? prefix + rupiah : '');
+    return prefix ? (rupiah ? prefix + rupiah : '') : rupiah;
 }
 
 // ================= SUBMIT =================
@@ -84,9 +94,10 @@ document.getElementById("formKeuangan").addEventListener("submit", function(e){
     let jenis = document.getElementById("jenis").value;
 
     let jumlahInput = document.getElementById("jumlah").value.replace(/[^0-9]/g, '');
-    let jumlah = parseInt(jumlahInput);
+    let jumlah = parseInt(jumlahInput) || 0;
 
     let editIndex = document.getElementById("editIndex").value;
+
     let data = { tanggal, keterangan, jenis, jumlah };
 
     if(editIndex === "") {
